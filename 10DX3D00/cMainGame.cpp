@@ -9,6 +9,9 @@
 #include "cCubeMan.h"
 // << :
 
+#include "cObject.h"
+#include "cObjectLoader.h"
+
 cMainGame::cMainGame()
 	: //m_pCubePC(NULL)
 	m_pCubeMan(NULL)
@@ -26,6 +29,7 @@ cMainGame::~cMainGame()
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pGrid);
 	SAFE_RELEASE(m_pTexture); 
+
 	g_pDeviceManager->Destroy();
 }
 
