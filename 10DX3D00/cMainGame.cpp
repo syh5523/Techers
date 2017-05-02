@@ -8,9 +8,9 @@
 #include "cGrid.h"
 #include "cCubeMan.h"
 // << :
-
-#include "cObject.h"
+#include "cGroup.h"
 #include "cObjectLoader.h"
+#include "cObjMap.h"
 
 cMainGame::cMainGame()
 	: //m_pCubePC(NULL)
@@ -18,6 +18,7 @@ cMainGame::cMainGame()
 	, m_pCamera(NULL)
 	, m_pGrid(NULL)
 	, m_pTexture(NULL) 
+	, m_pMap(NULL)
 {
 }
 
@@ -29,13 +30,18 @@ cMainGame::~cMainGame()
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pGrid);
 	SAFE_RELEASE(m_pTexture); 
+	SAFE_DELETE(m_pMap);
 
+
+	g_pObjectManager->Destroy();
+	g_pTextureManager->Destroy();
 	g_pDeviceManager->Destroy();
 }
 
 // >> : 
 void cMainGame::Setup()
 {
+
 	{
 		D3DXCreateTextureFromFile(g_pD3DDevice, "srccodetex.png", &m_pTexture); 
 		ST_PT_VERTEX v; 
@@ -61,12 +67,18 @@ void cMainGame::Setup()
 	m_pGrid = new cGrid; 
 	m_pGrid->Setup();
 
+	cObjectLoader loadObj;
+	loadObj.Load(m_vecGroup, "obj", "Map.obj");
+
+	Load_Surface(); //<<
+
 	Set_Light(); 
+
 }
 
 void cMainGame::Update()
 {
-	if (m_pCubeMan)	m_pCubeMan->Update(); 
+	if (m_pCubeMan)	m_pCubeMan->Update(m_pMap); 
 
 	if (m_pCamera) m_pCamera->Update();
 
@@ -84,6 +96,7 @@ void cMainGame::Render()
 
 	
 	if (m_pGrid) m_pGrid->Render(); 
+	Obj_Render();
 	if (m_pCubeMan) m_pCubeMan->Render(); 
 
 	{
@@ -114,6 +127,20 @@ void cMainGame::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 }
 
+void cMainGame::Obj_Render()
+{
+	D3DXMATRIXA16 matWorld, matS, matR;
+	D3DXMatrixScaling(&matS, 0.01f, 0.01f, 0.01f);
+	D3DXMatrixRotationX(&matR, -D3DX_PI / 2.0f);
+	matWorld = matS * matR;
+	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+	for each(auto p in m_vecGroup)
+	{
+		p->Render();
+	}
+}
+
 void cMainGame::Set_Light()
 {
 	D3DLIGHT9 stLight;
@@ -130,4 +157,15 @@ void cMainGame::Set_Light()
 	}
 
 	g_pD3DDevice->LightEnable(0, true);
+}
+
+void cMainGame::Load_Surface()
+{
+	D3DXMATRIXA16 matWorld, matS, matR;
+	D3DXMatrixScaling(&matS, 0.01f, 0.01f, 0.01f);
+	D3DXMatrixRotationX(&matR, -D3DX_PI / 2.0f);
+
+	matWorld = matS * matR;
+	m_pMap = new cObjMap("obj", "map_surface.obj", &matWorld);
+
 }

@@ -8,7 +8,6 @@ cMtlTex::cMtlTex()
 	ZeroMemory(&m_stMtl, sizeof(D3DMATERIAL9));
 }
 
-
 cMtlTex::~cMtlTex()
 {
 	SAFE_RELEASE(m_pTexture);

@@ -32,6 +32,10 @@
 #pragma comment(lib, "d3dx9.lib")
 
 using namespace std;
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 
+#include <iostream>
+
+using namespace std;
 
 extern HWND	g_hWnd;
 #define SAFE_RELEASE(p) { if(p) p->Release(); p = NULL; }
@@ -106,6 +110,8 @@ public: virtual void Set##funName(varType var)\
 
 
 // << :
+#include "iMap.h"
 
 #include "cDeviceManager.h"
 #include "cTextureManager.h"
+#include "cObjectManager.h"
