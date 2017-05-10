@@ -47,7 +47,7 @@ void cCamera::Update()
 
 	matR = matRX * matRY;
 
-	m_vEye = D3DXVECTOR3(0, 10, -m_fCameraDistance);
+	m_vEye = D3DXVECTOR3(0, 2, -m_fCameraDistance);
 	D3DXVec3TransformCoord(&m_vEye, &m_vEye, &matR);
 
 	if (m_pvTarget)
@@ -95,7 +95,7 @@ void cCamera::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_MOUSEWHEEL:
-		m_fCameraDistance -= (GET_WHEEL_DELTA_WPARAM(wParam) / 30.f);
+		m_fCameraDistance -= (GET_WHEEL_DELTA_WPARAM(wParam) / 40.f);
 		if (m_fCameraDistance < 0.0001f)
 			m_fCameraDistance = 0.0001f;
 		break;

@@ -11,20 +11,20 @@ cObjectLoader::cObjectLoader()
 cObjectLoader::~cObjectLoader()
 {
 }
-void cObjectLoader::Load(OUT std::vector<cGroup*>& vecGroup, IN char * szFolder, IN char * szFile)
+void cObjectLoader::Load(OUT vector<cGroup*>& vecGroup, IN char * szFolder, IN char * szFile)
 {
-	std::vector<D3DXVECTOR3> vecV;
-	std::vector<D3DXVECTOR2> vecVT;
-	std::vector<D3DXVECTOR3> vecVN;
-	std::vector<ST_PNT_VERTEX> vecVertex;
+	vector<D3DXVECTOR3> vecV;
+	vector<D3DXVECTOR2> vecVT;
+	vector<D3DXVECTOR3> vecVN;
+	vector<ST_PNT_VERTEX> vecVertex;
 
-	std::string sFullPath(szFolder);
+	string sFullPath(szFolder);
 	sFullPath += (std::string("/") + std::string(szFile));
 
 	FILE * fp;
 	fopen_s(&fp, sFullPath.c_str(), "r");
 
-	std::string sMtlName;
+	string sMtlName;
 
 	while (true)
 	{
@@ -185,7 +185,8 @@ void cObjectLoader::LoadMtlLib(char * szFolder, char * szFile)
 
 	fclose(fp);
 }
-void cObjectLoader::LoadSurface(OUT std::vector<D3DXVECTOR3>& vecSurface, IN char * szFolder, IN char * szFile, IN D3DXMATRIXA16 * pMat)
+void cObjectLoader::LoadSurface(OUT std::vector<D3DXVECTOR3>& vecSurface, IN char * szFolder, 
+	IN char * szFile, IN D3DXMATRIXA16 * pMat)
 {
 	std::vector<D3DXVECTOR3> vecV;
 

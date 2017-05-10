@@ -49,7 +49,6 @@ LPDIRECT3DDEVICE9	cDeviceManager::GetDevice()
 void cDeviceManager::Destroy()
 {
 	SAFE_RELEASE(m_pD3D); 
-
 	ULONG error = m_pD3DDevice->Release();
 
 #ifdef _DEBUG 

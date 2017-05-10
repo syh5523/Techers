@@ -2,15 +2,17 @@
 #include "cMainGame.h"
 #include "cDeviceManager.h"		/// << : 
 
-// >> :
 #include "cCubePC.h"
 #include "cCamera.h"
 #include "cGrid.h"
 #include "cCubeMan.h"
-// << :
+
 #include "cGroup.h"
 #include "cObjectLoader.h"
 #include "cObjMap.h"
+
+#include "cFrame.h"
+#include "cAseLoader.h"
 
 cMainGame::cMainGame()
 	: //m_pCubePC(NULL)
@@ -19,6 +21,7 @@ cMainGame::cMainGame()
 	, m_pGrid(NULL)
 	, m_pTexture(NULL) 
 	, m_pMap(NULL)
+	, m_pRootFrame(NULL)
 {
 }
 
@@ -26,12 +29,12 @@ cMainGame::cMainGame()
 cMainGame::~cMainGame()
 {
 	//SAFE_DELETE(m_pCubePC); 
-	SAFE_DELETE(m_pCubeMan);
+	//SAFE_DELETE(m_pCubeMan);
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pGrid);
 	SAFE_RELEASE(m_pTexture); 
 	SAFE_DELETE(m_pMap);
-
+	m_pRootFrame->Destroy();
 
 	g_pObjectManager->Destroy();
 	g_pTextureManager->Destroy();
@@ -41,8 +44,7 @@ cMainGame::~cMainGame()
 // >> : 
 void cMainGame::Setup()
 {
-
-	{
+	/*{
 		D3DXCreateTextureFromFile(g_pD3DDevice, "srccodetex.png", &m_pTexture); 
 		ST_PT_VERTEX v; 
 		v.p = D3DXVECTOR3(0, 0, 0);
@@ -56,19 +58,22 @@ void cMainGame::Setup()
 		v.p = D3DXVECTOR3(1, 0, 0);
 		v.t = D3DXVECTOR2(1, 1);
 		m_vecVertex.push_back(v);
-	}
+	}*/
 
-	m_pCubeMan = new cCubeMan; 
-	m_pCubeMan->Setup();
+	//m_pCubeMan = new cCubeMan; 
+	//m_pCubeMan->Setup();
+
+	cAseLoader load;
+	m_pRootFrame = load.LoadAse("woman/woman_01_all.ASE");
 
 	m_pCamera = new cCamera;
-	m_pCamera->Setup(&m_pCubeMan->GetPosition()); 
+	m_pCamera->Setup(NULL); 
 
 	m_pGrid = new cGrid; 
 	m_pGrid->Setup();
 
-	cObjectLoader loadObj;
-	loadObj.Load(m_vecGroup, "obj", "Map.obj");
+	//cObjectLoader loadObj;
+	//loadObj.Load(m_vecGroup, "obj", "Map.obj");
 
 	Load_Surface(); //<<
 
@@ -96,7 +101,7 @@ void cMainGame::Render()
 
 	
 	if (m_pGrid) m_pGrid->Render(); 
-	Obj_Render();
+	/*Obj_Render();
 	if (m_pCubeMan) m_pCubeMan->Render(); 
 
 	{
@@ -113,6 +118,9 @@ void cMainGame::Render()
 
 		g_pD3DDevice->SetTexture(0, NULL);
 	}
+	*/
+	if (m_pRootFrame)m_pRootFrame->Render();
+
 	g_pD3DDevice->EndScene();
 
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
