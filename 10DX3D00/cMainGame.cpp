@@ -2,14 +2,8 @@
 #include "cMainGame.h"
 #include "cDeviceManager.h"		/// << : 
 
-#include "cCubePC.h"
 #include "cCamera.h"
 #include "cGrid.h"
-#include "cCubeMan.h"
-
-#include "cGroup.h"
-#include "cObjectLoader.h"
-#include "cObjMap.h"
 
 #include "cFrame.h"
 #include "cAseLoader.h"
@@ -75,18 +69,14 @@ void cMainGame::Setup()
 	//cObjectLoader loadObj;
 	//loadObj.Load(m_vecGroup, "obj", "Map.obj");
 
-	Load_Surface(); //<<
-
 	Set_Light(); 
 
 }
 
 void cMainGame::Update()
 {
-	if (m_pCubeMan)	m_pCubeMan->Update(m_pMap); 
-
 	if (m_pCamera) m_pCamera->Update();
-
+	if (m_pRootFrame) m_pRootFrame->Update(m_pRootFrame->GetKeyFrame(), NULL);
 }
 
 void cMainGame::Render()
@@ -143,10 +133,6 @@ void cMainGame::Obj_Render()
 	matWorld = matS * matR;
 	g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
-	for each(auto p in m_vecGroup)
-	{
-		p->Render();
-	}
 }
 
 void cMainGame::Set_Light()
@@ -165,15 +151,4 @@ void cMainGame::Set_Light()
 	}
 
 	g_pD3DDevice->LightEnable(0, true);
-}
-
-void cMainGame::Load_Surface()
-{
-	D3DXMATRIXA16 matWorld, matS, matR;
-	D3DXMatrixScaling(&matS, 0.01f, 0.01f, 0.01f);
-	D3DXMatrixRotationX(&matR, -D3DX_PI / 2.0f);
-
-	matWorld = matS * matR;
-	m_pMap = new cObjMap("obj", "map_surface.obj", &matWorld);
-
 }

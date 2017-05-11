@@ -24,5 +24,14 @@ public:
 	void Destroy();
 	void CalcOriginalLocalTM(D3DXMATRIXA16 *pMatParent);
 
+	DWORD m_dwFirstFrame;
+	DWORD m_dwLastFrame;
+	DWORD m_dwFrameSpeed;
+	DWORD m_dwTicksPerFrame;
+
+	int GetKeyFrame();
+	void CalcLocalT(IN int nKeyFrame, OUT D3DXMATRIXA16& matT);
+	void CalcLocalR(IN int nKeyFrame, OUT D3DXMATRIXA16& matR);
+
 };
 

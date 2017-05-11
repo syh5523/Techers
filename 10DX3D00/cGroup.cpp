@@ -10,8 +10,7 @@ cGroup::cGroup()
 
 cGroup::~cGroup()
 {
-
-	SAFE_DELETE(m_pMtlTex);
+	SAFE_RELEASE(m_pMtlTex);
 }
 
 void cGroup::Render()

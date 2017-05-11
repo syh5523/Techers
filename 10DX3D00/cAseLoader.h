@@ -15,6 +15,11 @@ private:
 	vector<cMtlTex*>	 m_vecMtlTex;
 	map<string, cFrame*> m_mapFrame;
 
+	DWORD				m_dwFirstFrame;
+	DWORD				m_dwLastFrame;
+	DWORD				m_dwFrameSpeed;
+	DWORD				m_dwTicksPerFrame;
+
 public:
 
 	cFrame* LoadAse(IN char * szFullPath);
@@ -39,6 +44,10 @@ private:
 
 	void ProcessScene();
 	void Set_SceneFrame(OUT cFrame* pRoot);
+
+	void ProcessTM_ANIMATION(OUT cFrame* pFrame);
+	void ProcessCONTROL_POS_TRACK(OUT cFrame* pFrame);
+	void ProcessCONTROL_ROT_TRACK(OUT cFrame* pFrame);
 
 };
 

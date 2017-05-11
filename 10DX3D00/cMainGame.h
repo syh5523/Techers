@@ -35,8 +35,7 @@ public :
 	void WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	void Obj_Render();
 	void Set_Light();
-
-	void Load_Surface();		
+		
 
 };
 
