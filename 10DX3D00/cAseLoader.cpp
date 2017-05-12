@@ -337,7 +337,8 @@ void cAseLoader::ProcessMESH(OUT cFrame * pFrame)
 		D3DXVec3TransformNormal(&vecVertex[i].n, &vecVertex[i].n, &matInvWorld);
 	}
 
-	pFrame->SetVertex(vecVertex);
+	pFrame->BuildVB(vecVertex);
+	//pFrame->SetVertex(vecVertex);
 }
 
 void cAseLoader::ProcessMESH_VERTEX_LIST(OUT vector<D3DXVECTOR3>& vecV)

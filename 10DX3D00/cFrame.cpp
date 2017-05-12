@@ -3,6 +3,8 @@
 
 cFrame::cFrame()
 	: m_pMtlTex(NULL)
+	, m_pVB(NULL)
+	, m_nNumTri(0)
 {
 	D3DXMatrixIdentity(&m_matLocalTM);
 	D3DXMatrixIdentity(&m_matWorldTM);
@@ -12,12 +14,20 @@ cFrame::cFrame()
 cFrame::~cFrame()
 {
 	SAFE_RELEASE(m_pMtlTex);
+	SAFE_RELEASE(m_pVB);
 }
 
 void cFrame::Update(int nKeyFrame, D3DXMATRIXA16 * pMatParent)
 {
 	D3DXMATRIXA16 matR, matT;
-	/*{
+
+
+	CalcLocalR(nKeyFrame, matR);
+	CalcLocalT(nKeyFrame, matT);
+	m_matLocalTM = matR * matT;
+
+	/*else
+	{
 		D3DXMatrixIdentity(&matR);
 		matR = m_matLocalTM;
 		matR._41 = 0.0f;
@@ -30,10 +40,6 @@ void cFrame::Update(int nKeyFrame, D3DXMATRIXA16 * pMatParent)
 		matT._43 = m_matLocalTM._43;
 	}*/
 
-	CalcLocalR(nKeyFrame, matR);
-	CalcLocalT(nKeyFrame, matT);
-
-	m_matLocalTM = matR * matT;
 	m_matWorldTM = m_matLocalTM;
 
 	if (pMatParent)
@@ -55,10 +61,13 @@ void cFrame::Render()
 		g_pD3DDevice->SetTexture(0, m_pMtlTex->GetTexture());
 		g_pD3DDevice->SetMaterial(&m_pMtlTex->GetMaterial());
 		g_pD3DDevice->SetFVF(ST_PNT_VERTEX::FVF);
-		g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+		
+		g_pD3DDevice->SetStreamSource(0, m_pVB, 0, sizeof(ST_PNT_VERTEX));
+		g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, m_nNumTri);
+		/*g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
 			m_vecVertex.size() / 3,
 			&m_vecVertex[0],
-			sizeof(ST_PNT_VERTEX));
+			sizeof(ST_PNT_VERTEX));*/
 	}
 
 	for each(auto c in m_vecChild)
@@ -201,4 +210,23 @@ void cFrame::CalcLocalR(IN int nKeyFrame, OUT D3DXMATRIXA16 & matR)
 		&m_vecRotTrack[nNextIndex].q,
 		t);
 	D3DXMatrixRotationQuaternion(&matR, &q);
+}
+
+void cFrame::BuildVB(vector<ST_PNT_VERTEX>& vecVertex)
+{
+	m_nNumTri = vecVertex.size() / 3;
+	g_pD3DDevice->CreateVertexBuffer(vecVertex.size() * sizeof(ST_PNT_VERTEX), 0,
+		ST_PNT_VERTEX::FVF, D3DPOOL_MANAGED, &m_pVB, NULL);
+
+	ST_PNT_VERTEX* pV = NULL;
+	
+	m_pVB->Lock(
+		0,						//시작버퍼 위치
+		0,						//잠글 바이트 수
+		(LPVOID*)&pV,
+		0);
+
+	memcpy(pV, &vecVertex[0], vecVertex.size() * sizeof(ST_PNT_VERTEX));
+
+	m_pVB->Unlock();
 }
