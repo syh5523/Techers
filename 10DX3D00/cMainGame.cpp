@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "cMainGame.h"
-#include "cDeviceManager.h"		/// << : 
+#include "cDeviceManager.h"
 
 #include "cCamera.h"
 #include "cGrid.h"
@@ -12,6 +12,7 @@ cMainGame::cMainGame()
 	, m_pGrid(NULL)
 	, m_pFont(NULL)
 	, m_p3DText(NULL)
+	, m_pMeshTeapot(NULL), m_pMeshSphere(NULL)
 {
 }
 
@@ -23,6 +24,8 @@ cMainGame::~cMainGame()
 	m_pRootFrame->Destroy();
 	SAFE_RELEASE(m_pFont);
 	SAFE_RELEASE(m_p3DText);
+	SAFE_RELEASE(m_pMeshTeapot);
+	SAFE_RELEASE(m_pMeshSphere);
 
 	g_pObjectManager->Destroy();
 	g_pTextureManager->Destroy();
@@ -42,8 +45,9 @@ void cMainGame::Setup()
 	m_pGrid->Setup();
 
 
-	Set_Light(); 
-	Create_Font();
+	Set_Light(); //<<
+	//Create_Font();//<<
+	Setup_MeshObject();
 }
 
 void cMainGame::Update()
@@ -63,9 +67,10 @@ void cMainGame::Render()
 	g_pD3DDevice->BeginScene();
 
 	
-	if (m_pGrid) m_pGrid->Render(); 
-	if (m_pRootFrame) m_pRootFrame->Render();
-	Text_Render();
+	//if (m_pGrid) m_pGrid->Render(); 
+	//if (m_pRootFrame) m_pRootFrame->Render();
+	Mesh_Render();
+	//Text_Render();  //<<
 
 	g_pD3DDevice->EndScene();
 
@@ -97,7 +102,7 @@ void cMainGame::Set_Light()
 
 	g_pD3DDevice->LightEnable(0, true);
 }
-
+//>>
 void cMainGame::Create_Font()
 {
 	{
@@ -171,3 +176,52 @@ void cMainGame::Text_Render()
 		m_p3DText->DrawSubset(0);
 	}
 }
+void cMainGame::Setup_MeshObject()
+{
+	D3DXCreateTeapot(g_pD3DDevice, &m_pMeshTeapot, NULL);
+	D3DXCreateSphere(g_pD3DDevice, 0.5f, 50,50, &m_pMeshSphere, NULL);
+
+	ZeroMemory(&m_stMtlTeapot, sizeof(D3DMATERIAL9));
+	m_stMtlTeapot.Ambient = D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
+	m_stMtlTeapot.Diffuse = D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
+	m_stMtlTeapot.Specular = D3DXCOLOR(0.0f, 0.7f, 0.7f, 1.0f);
+
+	ZeroMemory(&m_stMtlSphere, sizeof(D3DMATERIAL9));
+	m_stMtlSphere.Ambient = D3DXCOLOR(0.7f, 0.7f, 0.0f, 1.0f);
+	m_stMtlSphere.Diffuse = D3DXCOLOR(0.7f, 0.7f, 0.0f, 1.0f);
+	m_stMtlSphere.Specular = D3DXCOLOR(0.7f, 0.7f, 0.0f, 1.0f);
+}
+void cMainGame::Mesh_Render()
+{
+	D3DXMATRIXA16 matWorld, matS, matR;
+	
+	
+	{
+		D3DXMatrixIdentity(&matWorld);
+		D3DXMatrixIdentity(&matS);
+		D3DXMatrixIdentity(&matR);
+
+		D3DXMatrixScaling(&matS, 1.0f, 1.0f, 1.0f);
+		matWorld = matS * matR;
+
+		D3DXMatrixTranslation(&matWorld, 0, 0, 5);
+		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+		g_pD3DDevice->SetMaterial(&m_stMtlTeapot);
+		m_pMeshTeapot->DrawSubset(0);
+	}
+
+	{
+		D3DXMatrixIdentity(&matWorld);
+		D3DXMatrixIdentity(&matS);
+		D3DXMatrixIdentity(&matR);
+
+		D3DXMatrixScaling(&matS, 1.0f, 1.0f, 1.0f);
+		matWorld = matS * matR;
+		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+		g_pD3DDevice->SetMaterial(&m_stMtlSphere);
+		m_pMeshSphere->DrawSubset(0);
+	}
+}
+//<<

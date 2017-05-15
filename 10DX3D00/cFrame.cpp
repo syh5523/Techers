@@ -3,8 +3,8 @@
 
 cFrame::cFrame()
 	: m_pMtlTex(NULL)
-	, m_pVB(NULL)
-	, m_nNumTri(0)
+	, m_pVB(NULL)		//<<
+	, m_nNumTri(0)		//<<
 {
 	D3DXMatrixIdentity(&m_matLocalTM);
 	D3DXMatrixIdentity(&m_matWorldTM);
@@ -14,7 +14,7 @@ cFrame::cFrame()
 cFrame::~cFrame()
 {
 	SAFE_RELEASE(m_pMtlTex);
-	SAFE_RELEASE(m_pVB);
+	SAFE_RELEASE(m_pVB);		//<<
 }
 
 void cFrame::Update(int nKeyFrame, D3DXMATRIXA16 * pMatParent)
@@ -62,8 +62,14 @@ void cFrame::Render()
 		g_pD3DDevice->SetMaterial(&m_pMtlTex->GetMaterial());
 		g_pD3DDevice->SetFVF(ST_PNT_VERTEX::FVF);
 		
-		g_pD3DDevice->SetStreamSource(0, m_pVB, 0, sizeof(ST_PNT_VERTEX));
+		//>>
+
+		g_pD3DDevice->SetStreamSource(0, m_pVB, 0, sizeof(ST_PNT_VERTEX));			
 		g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, m_nNumTri);
+
+		//<<
+
+
 		/*g_pD3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
 			m_vecVertex.size() / 3,
 			&m_vecVertex[0],
@@ -212,6 +218,7 @@ void cFrame::CalcLocalR(IN int nKeyFrame, OUT D3DXMATRIXA16 & matR)
 	D3DXMatrixRotationQuaternion(&matR, &q);
 }
 
+//>>
 void cFrame::BuildVB(vector<ST_PNT_VERTEX>& vecVertex)
 {
 	m_nNumTri = vecVertex.size() / 3;
@@ -230,3 +237,4 @@ void cFrame::BuildVB(vector<ST_PNT_VERTEX>& vecVertex)
 
 	m_pVB->Unlock();
 }
+//<<
