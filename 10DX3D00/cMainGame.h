@@ -3,6 +3,8 @@
 class cCamera; 
 class cGrid; 
 class cFrame;
+class cMtlTex;
+class cGroup;
 
 class cMainGame
 {
@@ -25,7 +27,9 @@ private:
 	D3DMATERIAL9			m_stMtlTeapot;
 	D3DMATERIAL9			m_stMtlSphere;
 	
-
+	LPD3DXMESH				m_pObjMesh;
+	vector<cMtlTex*>		m_vecObjMtlTex;
+	vector<cGroup*>			m_vecGroup;
 public :
 	void Setup();
 	void Update(); 

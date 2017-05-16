@@ -6,6 +6,9 @@
 #include "cGrid.h"
 #include "cAseLoader.h"
 #include "cFrame.h"
+#include "cObjectLoader.h"
+#include "cMtlTex.h"
+#include "cGroup.h"
 
 cMainGame::cMainGame()
 	: m_pCamera(NULL)
@@ -13,6 +16,7 @@ cMainGame::cMainGame()
 	, m_pFont(NULL)
 	, m_p3DText(NULL)
 	, m_pMeshTeapot(NULL), m_pMeshSphere(NULL)
+	, m_pObjMesh(NULL)
 {
 }
 
@@ -26,6 +30,12 @@ cMainGame::~cMainGame()
 	SAFE_RELEASE(m_p3DText);
 	SAFE_RELEASE(m_pMeshTeapot);
 	SAFE_RELEASE(m_pMeshSphere);
+
+	SAFE_RELEASE(m_pObjMesh);
+	for each(auto p in m_vecObjMtlTex)
+	{
+		SAFE_RELEASE(p);
+	}
 
 	g_pObjectManager->Destroy();
 	g_pTextureManager->Destroy();
@@ -43,6 +53,11 @@ void cMainGame::Setup()
 
 	m_pGrid = new cGrid; 
 	m_pGrid->Setup();
+
+	cObjectLoader l;
+	m_pObjMesh = l.LoadMesh(m_vecObjMtlTex, "obj", "map.obj");
+
+	l.Load(m_vecGroup, "obj", "map.obj");
 
 
 	Set_Light(); //<<
@@ -196,7 +211,7 @@ void cMainGame::Mesh_Render()
 	D3DXMATRIXA16 matWorld, matS, matR;
 	
 	
-	{
+	/*{
 		D3DXMatrixIdentity(&matWorld);
 		D3DXMatrixIdentity(&matS);
 		D3DXMatrixIdentity(&matR);
@@ -222,6 +237,25 @@ void cMainGame::Mesh_Render()
 
 		g_pD3DDevice->SetMaterial(&m_stMtlSphere);
 		m_pMeshSphere->DrawSubset(0);
+	}*/
+
+	{
+		D3DXMatrixIdentity(&matWorld);
+		D3DXMatrixIdentity(&matS);
+		D3DXMatrixIdentity(&matR);
+
+		D3DXMATRIXA16 matWorld, matS, matR;
+		D3DXMatrixScaling(&matS, 0.01f, 0.01f, 0.01f);
+		D3DXMatrixRotationX(&matR, -D3DX_PI / 2.0f);
+		matWorld = matS * matR;
+		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+		for (size_t i =0; i< m_vecObjMtlTex.size(); ++i)
+		{
+			g_pD3DDevice->SetTexture(0, m_vecObjMtlTex[i]->GetTexture());
+			g_pD3DDevice->SetMaterial(&m_vecObjMtlTex[i]->GetMaterial());
+			m_pObjMesh->DrawSubset(i);
+		}
 	}
 }
 //<<

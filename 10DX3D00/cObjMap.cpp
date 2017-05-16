@@ -18,8 +18,6 @@ void cObjMap::Load(IN char * szFolder, IN char * szFile, IN D3DXMATRIXA16 * pMat
 	loadObj.LoadSurface(m_vecSurface, szFolder, szFile, pMat);
 }
 
-
-
 bool cObjMap::GetHeight(IN float x, OUT float &y, IN float z)
 {
 	D3DXVECTOR3 vRayPos(x, 1000, z);
