@@ -20,8 +20,10 @@ void cWomanMove::Setup()
 {
 }
 
-void cWomanMove::Update()
+void cWomanMove::Update(iMap* pMap)
 {
+
+
 	D3DXVECTOR3 vPosition = m_vPosition;
 	m_IsMove = false;
 
@@ -73,12 +75,25 @@ void cWomanMove::Update()
 	m_vDirection = D3DXVECTOR3(0, 0, 1);
 	D3DXVec3TransformNormal(&m_vDirection, &m_vDirection, &matR);
 
+
+	if (pMap)
+	{
+		if (pMap->GetHeight(vPosition.x, vPosition.y, vPosition.z))
+		{
+			m_vPosition = vPosition;
+		}
+	}
+
 	//Translate
 	D3DXMATRIXA16 matT;
 	D3DXMatrixTranslation(&matT, m_vPosition.x, m_vPosition.y, m_vPosition.z);
 
 	m_matWorld = matR * matT;
 
+}
+
+void cWomanMove::Render()
+{
 }
 
 

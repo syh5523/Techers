@@ -19,6 +19,8 @@ private:
 public:
 
 	void Setup(char* szFolder, char* szRow, char* szTex, DWORD dwBytePerPixel = 1);
-
+	
+	virtual void Render() override;
+	virtual bool GetHeight(IN float x, OUT float&y, IN float z) override;
 };
 

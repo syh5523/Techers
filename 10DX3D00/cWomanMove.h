@@ -1,6 +1,7 @@
 #pragma once
 
 class iCanyon;
+class iMap;
 
 class cWomanMove
 {
@@ -20,6 +21,7 @@ protected:
 
 public:
 	virtual void Setup();
-	virtual void Update();
+	virtual void Update(iMap* pMap);
+	virtual void Render();
 };
 

@@ -31,9 +31,9 @@ void cWoman::Setup()
 	m_pRunFrame->Setup(false);
 }
 
-void cWoman::Update()
+void cWoman::Update(iMap* pMap)
 {
-	cWomanMove::Update();
+	cWomanMove::Update(pMap);
 
 	if (m_IsMove)
 	{

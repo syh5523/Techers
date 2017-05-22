@@ -2,6 +2,8 @@
 
 class cCamera; 
 class cWoman;
+class cWomanMove;
+class iMap;
 
 class cMainGame
 {
@@ -11,8 +13,9 @@ public:
 
 private:
 	cCamera*				m_pCamera;
-	cWoman*					m_pWoman;
-
+	cWomanMove*					m_pWoman;
+	//cWomanMove*				m_pWoman_Canyon;
+	iMap*					m_pMap;
 public :
 	void Setup();
 	void Update(); 
@@ -20,7 +23,7 @@ public :
 
 	void WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	void Set_Light();
-
+	void Setup_HeightMap();
 
 
 };

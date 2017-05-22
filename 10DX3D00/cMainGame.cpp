@@ -4,6 +4,7 @@
 
 #include "cCamera.h"
 #include "cWoman.h"
+#include "cHeightMap.h"
 
 cMainGame::cMainGame()
 	: m_pCamera(NULL)
@@ -24,21 +25,22 @@ cMainGame::~cMainGame()
 
 void cMainGame::Setup()
 {
-
+	cWoman* pWoman = new cWoman;
+	pWoman->Setup();
+	m_pWoman = pWoman;
+	
 	m_pCamera = new cCamera;
-	m_pCamera->Setup(NULL); 
+	m_pCamera->Setup(&m_pWoman->GetPosition());
 
-
-	m_pWoman = new cWoman;
-	m_pWoman->Setup();
-
+	Setup_HeightMap();
 	Set_Light();
 }
 
 void cMainGame::Update()
 {
 	if (m_pCamera) m_pCamera->Update();
-	if (m_pWoman) m_pWoman->Update();
+	
+	if (m_pWoman) m_pWoman->Update(m_pMap);
 }
 
 void cMainGame::Render()
@@ -51,8 +53,8 @@ void cMainGame::Render()
 
 	g_pD3DDevice->BeginScene();
 	///-----------------------------------------------------------------------------------
+	if (m_pMap) m_pMap->Render();
 	if (m_pWoman) m_pWoman->Render();
-
 
 	///-----------------------------------------------------------------------------------
 	g_pD3DDevice->EndScene();
@@ -84,4 +86,12 @@ void cMainGame::Set_Light()
 	}
 
 	g_pD3DDevice->LightEnable(0, true);
+}
+
+void cMainGame::Setup_HeightMap()
+{
+	cHeightMap *pMap = new cHeightMap;
+	pMap->Setup("HeightMapData/", "HeightMap.raw", "terrain.jpg");
+	m_pMap = pMap;
+
 }
