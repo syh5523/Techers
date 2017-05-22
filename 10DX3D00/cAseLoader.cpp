@@ -40,7 +40,6 @@ cFrame * cAseLoader::LoadAse(IN char * szFullPath)
 				Set_SceneFrame(pRoot);
 			}
 		}
-
 	}
 
 	fclose(m_fp);
@@ -51,6 +50,50 @@ cFrame * cAseLoader::LoadAse(IN char * szFullPath)
 	}
 
 	pRoot->CalcOriginalLocalTM(NULL);
+
+	return pRoot;
+}
+
+cFrame* cAseLoader::LoadAseMesh(OUT vector<cMtlTex*>& vecMtlTex, IN char * szFullPath)
+{
+	fopen_s(&m_fp, szFullPath, "r");
+
+	cFrame* pRoot = NULL;
+
+	while (char* szToken = GetToken())
+	{
+		if (IsEqual(szToken, ID_SCENE))
+		{
+			ProcessScene();
+		}
+		else if (IsEqual(szToken, ID_MATERIAL_LIST))
+		{
+			ProcessMATERIAL_LIST();
+
+		}
+		else if (IsEqual(szToken, ID_GEOMETRY))
+		{
+			cFrame* pFrame = ProcessGEOMOBJECT();
+			if (pRoot == NULL)
+			{
+				pRoot = pFrame;
+				Set_SceneFrame(pRoot);
+			}
+		}
+	}
+
+	fclose(m_fp);
+
+	pRoot->CalcOriginalLocalTM(NULL);
+
+	vecMtlTex.resize(m_vecMtlTex.size());
+	for each(auto it in m_vecMtlTex)
+	{
+		cMtlTex* mtltex = new cMtlTex;
+		mtltex->SetMaterial(it->GetMaterial());
+		mtltex->SetTexture(it->GetTexture());
+		vecMtlTex.push_back(mtltex);
+	}
 
 	return pRoot;
 }
@@ -77,16 +120,16 @@ char * cAseLoader::GetToken()
 			if (nReadCnt == 0) continue;
 			else break;
 
-			
+
 		}
 		m_szToken[nReadCnt++] = c;
 	}
 
-		if (nReadCnt == 0) return NULL;
+	if (nReadCnt == 0) return NULL;
 
-		m_szToken[nReadCnt] = '\0';
+	m_szToken[nReadCnt] = '\0';
 
-		return m_szToken;
+	return m_szToken;
 
 }
 
@@ -336,12 +379,9 @@ void cAseLoader::ProcessMESH(OUT cFrame * pFrame)
 		D3DXVec3TransformCoord(&vecVertex[i].p, &vecVertex[i].p, &matInvWorld);
 		D3DXVec3TransformNormal(&vecVertex[i].n, &vecVertex[i].n, &matInvWorld);
 	}
-	//>>
 
-	pFrame->BuildVB(vecVertex);
-	//pFrame->SetVertex(vecVertex);
-
-	//<<
+	pFrame->SetVertex(vecVertex);
+	//pFrame->BuildVB(vecVertex);
 }
 
 void cAseLoader::ProcessMESH_VERTEX_LIST(OUT vector<D3DXVECTOR3>& vecV)
@@ -446,7 +486,7 @@ void cAseLoader::ProcessMESH_TFACELIST(OUT vector<ST_PNT_VERTEX>& vecVertex, IN 
 void cAseLoader::ProcessMESH_NORMALS(OUT vector<ST_PNT_VERTEX>& vecVertex)
 {
 	int nFaceIndex = 0;
-	int aModIndex[3] = { 0, 2, 1};
+	int aModIndex[3] = { 0, 2, 1 };
 	int nModelCount = 0;
 
 	int nLevel = 0;

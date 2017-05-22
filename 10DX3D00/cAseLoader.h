@@ -23,6 +23,7 @@ private:
 public:
 
 	cFrame* LoadAse(IN char * szFullPath);
+	cFrame* LoadAseMesh(OUT vector<cMtlTex*>& vecMtlTex, IN char * szFullPath);
 private:
 	char* GetToken();
 	int	  GetInteger();
