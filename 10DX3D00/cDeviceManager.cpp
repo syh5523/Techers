@@ -54,4 +54,5 @@ void cDeviceManager::Destroy()
 #ifdef _DEBUG 
 	assert(error == 0 && "생성된 객체중 해제되지 않은것이 있슴"); 
 #endif
+
 }

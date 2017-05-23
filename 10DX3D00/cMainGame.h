@@ -13,9 +13,12 @@ public:
 
 private:
 	cCamera*				m_pCamera;
-	cWomanMove*					m_pWoman;
-	//cWomanMove*				m_pWoman_Canyon;
+	cWomanMove*				m_pWoman;
 	iMap*					m_pMap;
+
+	LPD3DXSPRITE			m_pSprite;
+	D3DXIMAGE_INFO			m_stImageInfo;
+	LPDIRECT3DTEXTURE9		m_pTexture;
 public :
 	void Setup();
 	void Update(); 
@@ -25,6 +28,7 @@ public :
 	void Set_Light();
 	void Setup_HeightMap();
 
-
+	void Setup_UI();
+	void UI_Render();
 };
 

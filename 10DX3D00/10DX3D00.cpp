@@ -54,7 +54,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		{
 			if (msg.message == WM_QUIT)
 			{
-				exit(0); 
 				break;
 			}
 			else
