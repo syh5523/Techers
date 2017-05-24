@@ -95,10 +95,3 @@ void cWomanMove::Update(iMap* pMap)
 void cWomanMove::Render()
 {
 }
-
-
-
-//바닥들의 버텍스
-//넘겨줄 포지션
-
-//만약 트루면 = 현재포지션 변경

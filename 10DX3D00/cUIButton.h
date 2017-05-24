@@ -1,11 +1,10 @@
 #pragma once
 #include "cUIObject.h"
-class cUIButton :
-	public cUIObject
+class cUIButton :public cUIObject
 {
 public:
 	cUIButton();
-	~cUIButton();
+	virtual ~cUIButton() override;
 protected:
 	enum eButtonState
 	{
@@ -17,6 +16,8 @@ protected:
 
 	eButtonState		m_eButtonState;
 	LPDIRECT3DTEXTURE9	m_aTexture[E_STATE_CNT];
+
+	SYNTHESIZE(iButtonDelegate*, m_pDelegate, Delegate)
 
 public:
 	void SetTexture(char* szNor, char* szOvr, char* szSelect);

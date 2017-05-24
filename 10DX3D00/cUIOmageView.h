@@ -4,7 +4,7 @@ class cUIOmageView : public cUIObject
 {
 public:
 	cUIOmageView();
-	virtual ~cUIOmageView();
+	virtual ~cUIOmageView() override;
 
 protected:
 	LPDIRECT3DTEXTURE9 m_pTexture;

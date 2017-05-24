@@ -7,7 +7,7 @@ class cWomanMove
 {
 public:
 	cWomanMove();
-	~cWomanMove();
+	virtual ~cWomanMove();
 
 protected:
 	SYNTHESIZE(bool, m_IsMove, IsMove)

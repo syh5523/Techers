@@ -1,11 +1,12 @@
 #pragma once
 
 class cCamera; 
-class cWoman;
 class cWomanMove;
 class iMap;
+class cUIObject;
+#include "cUIButton.h"
 
-class cMainGame
+class cMainGame : public iButtonDelegate
 {
 public:
 	cMainGame();
@@ -17,8 +18,7 @@ private:
 	iMap*					m_pMap;
 
 	LPD3DXSPRITE			m_pSprite;
-	D3DXIMAGE_INFO			m_stImageInfo;
-	LPDIRECT3DTEXTURE9		m_pTexture;
+	cUIObject*				m_pUIRoot;
 public :
 	void Setup();
 	void Update(); 
@@ -30,5 +30,8 @@ public :
 
 	void Setup_UI();
 	void UI_Render();
+
+
+	virtual void OnClick(cUIButton* pSender) override;
 };
 

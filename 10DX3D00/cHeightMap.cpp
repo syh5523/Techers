@@ -11,7 +11,6 @@ cHeightMap::cHeightMap()
 
 cHeightMap::~cHeightMap()
 {
-
 	SAFE_RELEASE(m_pMesh);
 	SAFE_RELEASE(m_pTexture);
 }

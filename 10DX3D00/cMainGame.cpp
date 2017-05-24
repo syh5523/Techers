@@ -6,9 +6,21 @@
 #include "cWoman.h"
 #include "cHeightMap.h"
 
+#include "cUIOmageView.h"
+#include "cUITextView.h"
+
+enum 
+{
+	E_BUTTON_OK = 11,
+	E_BUTTON_OK_CANCEL,
+	E_BUTTON_OK_EXIT,
+	E_TEXT_VIEW,
+};
+
 cMainGame::cMainGame()
 	: m_pCamera(NULL)
 	, m_pWoman(NULL)
+	, m_pUIRoot(NULL)
 	, m_pSprite(NULL)
 {
 }
@@ -18,8 +30,11 @@ cMainGame::~cMainGame()
 {
 	SAFE_DELETE(m_pCamera);
 	SAFE_DELETE(m_pWoman);
-	SAFE_RELEASE(m_pSprite);
+	SAFE_RELEASE(m_pSprite)
 	
+	SAFE_DELETE(m_pMap);
+	if (m_pUIRoot) m_pUIRoot->Destroy();
+	g_pFontManager->Destroy();
 	g_pObjectManager->Destroy();
 	g_pTextureManager->Destroy();
 	g_pDeviceManager->Destroy();
@@ -44,6 +59,8 @@ void cMainGame::Update()
 	if (m_pCamera) m_pCamera->Update();
 	
 	if (m_pWoman) m_pWoman->Update(m_pMap);
+
+	m_pUIRoot->Update();
 }
 
 void cMainGame::Render()
@@ -94,7 +111,7 @@ void cMainGame::Set_Light()
 void cMainGame::Setup_HeightMap()
 {
 	cHeightMap *pMap = new cHeightMap;
-	pMap->Setup("HeightMapData/", "HAT.raw", "HAT.jpg");
+	pMap->Setup("HeightMapData/", "HeightMap.raw", "terrain.jpg");
 	m_pMap = pMap;
 }
 
@@ -102,35 +119,48 @@ void cMainGame::Setup_UI()
 {
 	D3DXCreateSprite(g_pD3DDevice, &m_pSprite);
 
-	//m_pTexture = g_pTextureManager->GetTexture("UI/±èÅÂÈñ.jpg");
-	D3DXCreateTextureFromFileEx(g_pD3DDevice, "UI/±èÅÂÈñ.jpg", D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2,
-		D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_NONE, D3DX_DEFAULT, 0, &m_stImageInfo,
-		NULL, &m_pTexture);
+	cUIOmageView* pImageView = new cUIOmageView;
+	pImageView->SetPosition(0, 0, 0);
+	pImageView->SetTexture("UI/panel-info.png");
+	m_pUIRoot = pImageView;
+
+
+	cUITextView* pTextView = new cUITextView;
+	pTextView->SetText("Á»ºñÃâÇö");
+	pTextView->SetSize(ST_SIZEN(300, 200));
+	pTextView->SetPosition(100, 100);
+	pTextView->SetDrawTextFormat(DT_CENTER | DT_VCENTER | DT_WORDBREAK);
+	pTextView->SetTextColor(D3DCOLOR_XRGB(255, 255, 0));
+	pTextView->SetnTag(E_TEXT_VIEW);
+
+	m_pUIRoot->AddChild(pTextView);
+
+	cUIButton* pButtonOnOK = new cUIButton;
+	pButtonOnOK->SetTexture("UI/btn-med-up.png", "UI/btn-med-over.png", "UI/btn-med-down.png");
+	pButtonOnOK->SetPosition(135, 330);
+	pButtonOnOK->SetDelegate(this);
+	pButtonOnOK->SetnTag(E_BUTTON_OK);
+	m_pUIRoot->AddChild(pButtonOnOK);
+
 }
 
 void cMainGame::UI_Render()
 {
-	m_pSprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_TEXTURE);
-	RECT rc;
-	SetRect(&rc, 0, 0, m_stImageInfo.Width, m_stImageInfo.Height);
 
-	D3DXMATRIXA16 matT, matR, matS, mat;
-	D3DXMatrixIdentity(&matT);
-	D3DXMatrixIdentity(&matR);
-	D3DXMatrixIdentity(&mat);
+	if (m_pUIRoot)
+		m_pUIRoot->Render(m_pSprite);
+}
 
-	static float fAngle = 0.0f;
-	fAngle += 0.01f;
+void cMainGame::OnClick(cUIButton * pSender)
+{
+	cUITextView* pTextView = (cUITextView*)m_pUIRoot->FindChildByTag(E_TEXT_VIEW);
 
-	D3DXMatrixRotationZ(&matR, fAngle);
+	if (pSender->GetnTag() == E_BUTTON_OK)
+	{
+		pTextView->SetText("È®ÀÎ");
+	}
+	else
+	{
 
-	D3DXMatrixTranslation(&matT, 500, 200, 0.0f);
-
-	mat = matR * matT;
-
-	m_pSprite->SetTransform(&mat);
-	
-	m_pSprite->Draw(m_pTexture, &rc, &D3DXVECTOR3(0, 0, 0), &D3DXVECTOR3(-300, -200, 0), D3DCOLOR_ARGB(120, 255, 255, 255));
-		
-	m_pSprite->End();
+	}
 }

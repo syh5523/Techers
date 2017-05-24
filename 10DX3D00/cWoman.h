@@ -8,7 +8,7 @@ class cWoman : public cWomanMove
 {
 public:
 	cWoman();
-	~cWoman();
+	virtual ~cWoman() override;
 
 private:
 	cFrame*					m_pRunFrame;
