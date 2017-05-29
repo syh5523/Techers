@@ -99,5 +99,7 @@ void cCamera::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (m_fCameraDistance < 0.0001f)
 			m_fCameraDistance = 0.0001f;
 		break;
+
+
 	}
 }

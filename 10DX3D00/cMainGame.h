@@ -1,12 +1,9 @@
 #pragma once
 
 class cCamera; 
-class cWomanMove;
-class iMap;
-class cUIObject;
-#include "cUIButton.h"
+class cSkinnedMesh;
 
-class cMainGame : public iButtonDelegate
+class cMainGame
 {
 public:
 	cMainGame();
@@ -14,11 +11,7 @@ public:
 
 private:
 	cCamera*				m_pCamera;
-	cWomanMove*				m_pWoman;
-	iMap*					m_pMap;
-
-	LPD3DXSPRITE			m_pSprite;
-	cUIObject*				m_pUIRoot;
+	cSkinnedMesh*			m_pSkinnedMesh;
 public :
 	void Setup();
 	void Update(); 
@@ -26,12 +19,6 @@ public :
 
 	void WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	void Set_Light();
-	void Setup_HeightMap();
 
-	void Setup_UI();
-	void UI_Render();
-
-
-	virtual void OnClick(cUIButton* pSender) override;
 };
 

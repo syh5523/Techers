@@ -3,11 +3,7 @@
 #include "cDeviceManager.h"
 
 #include "cCamera.h"
-#include "cWoman.h"
-#include "cHeightMap.h"
-
-#include "cUIOmageView.h"
-#include "cUITextView.h"
+#include "cSkinnedMesh.h"
 
 enum 
 {
@@ -19,9 +15,6 @@ enum
 
 cMainGame::cMainGame()
 	: m_pCamera(NULL)
-	, m_pWoman(NULL)
-	, m_pUIRoot(NULL)
-	, m_pSprite(NULL)
 {
 }
 
@@ -29,11 +22,8 @@ cMainGame::cMainGame()
 cMainGame::~cMainGame()
 {
 	SAFE_DELETE(m_pCamera);
-	SAFE_DELETE(m_pWoman);
-	SAFE_RELEASE(m_pSprite)
-	
-	SAFE_DELETE(m_pMap);
-	if (m_pUIRoot) m_pUIRoot->Destroy();
+	SAFE_DELETE(m_pSkinnedMesh);
+
 	g_pFontManager->Destroy();
 	g_pObjectManager->Destroy();
 	g_pTextureManager->Destroy();
@@ -42,25 +32,21 @@ cMainGame::~cMainGame()
 
 void cMainGame::Setup()
 {
-	cWoman* pWoman = new cWoman;
-	pWoman->Setup();
-	m_pWoman = pWoman;
 	
 	m_pCamera = new cCamera;
-	m_pCamera->Setup(&m_pWoman->GetPosition());
+	m_pCamera->Setup(NULL);
 
-	Setup_UI();
-	Setup_HeightMap();
 	Set_Light();
+
+	m_pSkinnedMesh = new cSkinnedMesh;
+	m_pSkinnedMesh->Setup("Zealot","zealot.X");
 }
 
 void cMainGame::Update()
 {
 	if (m_pCamera) m_pCamera->Update();
-	
-	if (m_pWoman) m_pWoman->Update(m_pMap);
 
-	m_pUIRoot->Update();
+	m_pSkinnedMesh->Update();
 }
 
 void cMainGame::Render()
@@ -73,9 +59,7 @@ void cMainGame::Render()
 
 	g_pD3DDevice->BeginScene();
 	///-----------------------------------------------------------------------------------
-	if (m_pMap) m_pMap->Render();
-	if (m_pWoman) m_pWoman->Render();
-	UI_Render();
+	m_pSkinnedMesh->Render(NULL);
 	///-----------------------------------------------------------------------------------
 	g_pD3DDevice->EndScene();
 
@@ -88,6 +72,16 @@ void cMainGame::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		m_pCamera->WndProc(hwnd, message, wParam, lParam); 
 	}
+
+	switch (message)
+	{
+	case WM_RBUTTONDOWN:
+		static int n = 0;
+		//m_pSkinnedMesh->SetAnimationIndex(n++);
+		m_pSkinnedMesh->SetAnimationIndexBlend(n++);
+		break;
+	}
+	
 }
 
 void cMainGame::Set_Light()
@@ -106,61 +100,4 @@ void cMainGame::Set_Light()
 	}
 
 	g_pD3DDevice->LightEnable(0, true);
-}
-
-void cMainGame::Setup_HeightMap()
-{
-	cHeightMap *pMap = new cHeightMap;
-	pMap->Setup("HeightMapData/", "HeightMap.raw", "terrain.jpg");
-	m_pMap = pMap;
-}
-
-void cMainGame::Setup_UI()
-{
-	D3DXCreateSprite(g_pD3DDevice, &m_pSprite);
-
-	cUIOmageView* pImageView = new cUIOmageView;
-	pImageView->SetPosition(0, 0, 0);
-	pImageView->SetTexture("UI/panel-info.png");
-	m_pUIRoot = pImageView;
-
-
-	cUITextView* pTextView = new cUITextView;
-	pTextView->SetText("좀비출현");
-	pTextView->SetSize(ST_SIZEN(300, 200));
-	pTextView->SetPosition(100, 100);
-	pTextView->SetDrawTextFormat(DT_CENTER | DT_VCENTER | DT_WORDBREAK);
-	pTextView->SetTextColor(D3DCOLOR_XRGB(255, 255, 0));
-	pTextView->SetnTag(E_TEXT_VIEW);
-
-	m_pUIRoot->AddChild(pTextView);
-
-	cUIButton* pButtonOnOK = new cUIButton;
-	pButtonOnOK->SetTexture("UI/btn-med-up.png", "UI/btn-med-over.png", "UI/btn-med-down.png");
-	pButtonOnOK->SetPosition(135, 330);
-	pButtonOnOK->SetDelegate(this);
-	pButtonOnOK->SetnTag(E_BUTTON_OK);
-	m_pUIRoot->AddChild(pButtonOnOK);
-
-}
-
-void cMainGame::UI_Render()
-{
-
-	if (m_pUIRoot)
-		m_pUIRoot->Render(m_pSprite);
-}
-
-void cMainGame::OnClick(cUIButton * pSender)
-{
-	cUITextView* pTextView = (cUITextView*)m_pUIRoot->FindChildByTag(E_TEXT_VIEW);
-
-	if (pSender->GetnTag() == E_BUTTON_OK)
-	{
-		pTextView->SetText("확인");
-	}
-	else
-	{
-
-	}
 }
